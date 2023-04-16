@@ -1,12 +1,12 @@
 import React from "react";
-import { Container, Row, Tabs, Tab } from "react-bootstrap";
+import { Row, Tabs, Tab } from "react-bootstrap";
 import "./Home.css";
 import Login from "../Login/Login";
 import SignUp from "../SignUp/SignUp";
 
 export default function Home() {
   return (
-    <Container fluid className="main">
+    <>
       <Row className="box1 m-5">
         <h1>Whats Up (The Real Time Chat Application)</h1>
       </Row>
@@ -25,6 +25,6 @@ export default function Home() {
           </Tab>
         </Tabs>
       </Row>
-    </Container>
+    </>
   );
 }
