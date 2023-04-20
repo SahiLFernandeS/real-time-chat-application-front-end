@@ -1,6 +1,9 @@
-export const BaseURL = "http://localhost:8000/api/user/";
+export const BaseURL = "http://localhost:8000/";
 
 export const API = {
-  REGISTER: "",
-  LOGIN: "login",
+  REGISTER: "api/user/",
+  LOGIN: "api/user/login",
+  GETALLUSER: "api/user",
+  CREATEACCESSCHAT: "api/chat",
+  FETCHCHATS: "api/chat",
 };

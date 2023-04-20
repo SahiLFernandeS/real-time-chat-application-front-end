@@ -1,100 +1,117 @@
-import React, { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Box, TextField } from "@mui/material";
+import { useForm } from "react-hook-form";
+import React from "react";
+import { useDispatch } from "react-redux";
 import { POSTCALL } from "../../Services/Services";
 import { API } from "../../API";
+import {
+  fetchLoginFailure,
+  fetchLoginRequest,
+  fetchLoginSuccess,
+} from "../../redux";
 import { useNavigate } from "react-router-dom";
 
-export default function SignUp() {
-  const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+function SignUp() {
+  const {
+    register,
+    handleSubmit,
+    // eslint-disable-next-line
+    watch,
+    formState: { errors },
+  } = useForm();
 
-  const handleSignUp = (e) => {
-    e.preventDefault();
-    if (!name || !email || !password || !confirmPassword) {
-      return alert("Please fill all the fields");
-    }
-    if (password !== confirmPassword) {
-      return alert("Password doesn't natch confirm password");
-    }
-    const payload = {
-      name: name,
-      email: email,
-      password: password,
-    };
-    POSTCALL(API.REGISTER, payload)
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const onSubmit = (data) => {
+    console.log(data);
+    dispatch(fetchLoginRequest());
+    POSTCALL(API.REGISTER, data)
       .then((res) => {
-        console.log("res------------>", res);
-        sessionStorage.setItem("userName", email);
+        dispatch(fetchLoginSuccess(res));
+        sessionStorage.setItem("userName", res.name);
         navigate("/chat");
       })
-      .catch((err) => {
-        alert(err);
+      .catch((error) => {
+        dispatch(fetchLoginFailure(error));
       });
-    setName("");
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
   };
+
   return (
-    <Form>
-      <Form.Group className="mb-2" controlId="formName">
-        <Form.Label>Name</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter Name"
-          value={name}
-          onChange={(e) => {
-            setName(e.target.value);
-          }}
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-2" controlId="formEmail">
-        <Form.Label>Email address</Form.Label>
-        <Form.Control
-          type="email"
-          placeholder="Enter email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-2" controlId="formPassword">
-        <Form.Label>Password</Form.Label>
-        <Form.Control
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-2" controlId="formConfirmPassword">
-        <Form.Label>Confirm Password</Form.Label>
-        <Form.Control
-          type="password"
-          placeholder="Password"
-          value={confirmPassword}
-          onChange={(e) => {
-            setConfirmPassword(e.target.value);
-          }}
-        />
-      </Form.Group>
-      <Button
-        variant="primary"
+    <Box
+      sx={{ padding: "10px" }}
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <TextField
+        id="outlined-name-input"
+        label="User Name"
+        type="text"
+        sx={{ width: "100%", margin: "10px 0px" }}
+        size="small"
+        {...register("name", {
+          required: true,
+          maxLength: 20,
+        })}
+      />
+      {errors.userName && (
+        <span style={{ color: "red" }}>Please provide valid input</span>
+      )}
+      <TextField
+        id="outlined-email-input"
+        label="Email Address"
+        type="text"
+        sx={{ width: "100%", margin: "10px 0px" }}
+        size="small"
+        {...register("email", {
+          required: true,
+          pattern: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+        })}
+      />
+      {errors.email && (
+        <span style={{ color: "red" }}>Please provide valid input</span>
+      )}
+      <TextField
+        id="outlined-password-input"
+        label="Password"
+        type="password"
+        sx={{ width: "100%", margin: "10px 0px" }}
+        size="small"
+        {...register("password", {
+          required: true,
+        })}
+      />
+      {errors.password && (
+        <span style={{ color: "red" }}>Please provide valid input</span>
+      )}
+      <TextField
+        id="outlined-cpassword-input"
+        label="Confirm Password"
+        type="password"
+        sx={{ width: "100%", margin: "10px 0px" }}
+        size="small"
+        {...register("confirmPassword", {
+          required: true,
+        })}
+      />
+      {errors.confirmPassword && (
+        <span style={{ color: "red" }}>Please provide valid input</span>
+      )}
+      <TextField
+        id="outlined-Submit-input"
         type="submit"
-        className="mb-2 w-100"
-        onClick={handleSignUp}
-      >
-        Sign Up
-      </Button>
-    </Form>
+        sx={{
+          width: "100%",
+          margin: "10px 0px",
+          backgroundColor: "rgb(0 137 255)",
+          input: { color: "#fff" },
+        }}
+        value="Sign Up"
+        size="small"
+      />
+    </Box>
   );
 }
+
+export default SignUp;

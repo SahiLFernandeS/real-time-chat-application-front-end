@@ -1,79 +1,124 @@
+import { Box, Button, TextField } from "@mui/material";
+import { useForm } from "react-hook-form";
 import React, { useState } from "react";
-import { Button, Form } from "react-bootstrap";
 import { POSTCALL } from "../../Services/Services";
+// eslint-disable-next-line
+import { useDispatch } from "react-redux";
+// eslint-disable-next-line
+import {
+  fetchLoginFailure,
+  fetchLoginRequest,
+  fetchLoginSuccess,
+} from "../../redux";
 import { API } from "../../API";
 import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
 
-  const loginHandler = (e) => {
-    e.preventDefault();
-    if (!email || !password) {
-      return alert("Please fill all the fields");
-    }
-    const payload = { email: email, password: password };
-    setEmail("");
-    setPassword("");
-    POSTCALL(API.LOGIN, payload)
+  const {
+    register,
+    handleSubmit,
+    // eslint-disable-next-line
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm();
+
+  const dispatch = useDispatch();
+
+  const onSubmit = (data) => {
+    // console.log(data);
+
+    dispatch(fetchLoginRequest());
+    POSTCALL(API.LOGIN, data)
       .then((res) => {
-        console.log("res---------->", res);
-        sessionStorage.setItem("userName", email);
+        // console.log("res------->", res);
+        dispatch(fetchLoginSuccess(res));
+        sessionStorage.setItem("userName", res.name);
         navigate("/chat");
       })
-      .catch((err) => {
-        // console.log("err------------->", err);
-        alert(err);
+      .catch((error) => {
+        dispatch(fetchLoginFailure(error));
       });
-  };
-
-  const handleGuest = () => {
-    setEmail("guest@sahil.com");
-    setPassword("1234");
+    setEmail("");
+    setPassword("");
   };
   return (
-    <>
-      <Form>
-        <Form.Group className="mb-2" controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </Form.Group>
+    <Box
+      sx={{ padding: "10px" }}
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <TextField
+        id="outlined-email-input"
+        label="Email Address"
+        type="text"
+        sx={{ width: "100%", margin: "10px 0px" }}
+        size="small"
+        // required
 
-        <Form.Group className="mb-2" controlId="formBasicPassword">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-          />
-        </Form.Group>
-        <Button
-          variant="primary"
-          type="submit"
-          className="mb-2 w-100"
-          onClick={loginHandler}
-        >
-          Login
-        </Button>
-        <Button
-          variant="danger"
-          type="button"
-          className="mb-2 w-100"
-          onClick={handleGuest}
-        >
-          Guest Login
-        </Button>
-      </Form>
-    </>
+        onChange={(e) => {
+          setEmail(e.target.value);
+        }}
+        // value={email}
+        {...register("email", {
+          required: true,
+          pattern: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+          value: email,
+        })}
+      />
+      {errors.email && (
+        <span style={{ color: "red" }}>Please provide valid input</span>
+      )}
+      <TextField
+        id="outlined-password-input"
+        label="Password"
+        type="password"
+        sx={{ width: "100%", margin: "10px 0px" }}
+        size="small"
+        // required
+
+        onChange={(e) => {
+          setPassword(e.target.value);
+        }}
+        {...register("password", { required: true, value: password })}
+        // value={password}
+      />
+      {errors.password && (
+        <span style={{ color: "red" }}>Please provide valid input</span>
+      )}
+      <Button
+        variant="contained"
+        type="submit"
+        color="success"
+        sx={{
+          width: "100%",
+          margin: "10px 0px",
+        }}
+      >
+        Login
+      </Button>
+      <Button
+        variant="contained"
+        color="error"
+        sx={{
+          width: "100%",
+          margin: "10px 0px",
+        }}
+        onClick={() => {
+          setEmail("guest@sahil.com");
+          setValue("email", "guest@sahil.com");
+          setPassword("1234");
+          setValue("password", "1234");
+        }}
+      >
+        Guest Login
+      </Button>
+    </Box>
   );
 }
+
+export default Login;
