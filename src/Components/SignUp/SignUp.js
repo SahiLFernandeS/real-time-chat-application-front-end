@@ -1,6 +1,6 @@
 import { Box, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { POSTCALL } from "../../Services/Services";
 import { API } from "../../API";
@@ -10,6 +10,8 @@ import {
   fetchLoginSuccess,
 } from "../../redux";
 import { useNavigate } from "react-router-dom";
+import Loader from "../Loader/Loader";
+import Swal from "sweetalert2";
 
 function SignUp() {
   const {
@@ -20,21 +22,33 @@ function SignUp() {
     formState: { errors },
   } = useForm();
 
+  const [loader, setLoader] = useState(false);
+
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
   const onSubmit = (data) => {
-    console.log(data);
+    // console.log(data);
+    setLoader(true);
     dispatch(fetchLoginRequest());
     POSTCALL(API.REGISTER, data)
       .then((res) => {
         dispatch(fetchLoginSuccess(res));
         sessionStorage.setItem("userName", res.name);
         navigate("/chat");
+        setLoader(false);
       })
       .catch((error) => {
         dispatch(fetchLoginFailure(error));
+        // alert(error);
+        setLoader(false);
+        Swal.fire({
+          icon: "error",
+          // title: 'Error',
+          text: error,
+          // footer: '<a href="">Why do I have this issue?</a>'
+        });
       });
   };
 
@@ -110,6 +124,8 @@ function SignUp() {
         value="Sign Up"
         size="small"
       />
+
+      {loader && <Loader />}
     </Box>
   );
 }

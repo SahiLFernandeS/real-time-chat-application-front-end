@@ -1,4 +1,4 @@
-export const BaseURL = "http://localhost:8000/";
+export const BaseURL = "http://192.168.0.110:8000/";
 
 export const API = {
   REGISTER: "api/user/",
@@ -6,4 +6,5 @@ export const API = {
   GETALLUSER: "api/user",
   CREATEACCESSCHAT: "api/chat",
   FETCHCHATS: "api/chat",
+  CREATEGROUPCHAT: "api/chat/group",
 };

@@ -46,3 +46,26 @@ export const GETCALL = (path, token) => {
       });
   });
 };
+
+export const GETCALLWITHCANCEL = (path, cancelToken, token = "") => {
+  let config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    cancelToken: cancelToken,
+  };
+
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${BaseURL}${path}`, config)
+      .then((response) => {
+        resolve(response.data);
+      })
+      .catch((error) => {
+        if (axios.isCancel(error)) {
+          console.log("Request canceled", error.message);
+        }
+        reject(error.message);
+      });
+  });
+};

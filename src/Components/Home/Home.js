@@ -2,8 +2,11 @@ import { Box, Typography, Tab, Tabs } from "@mui/material";
 import React, { useState } from "react";
 import Login from "../Login/Login";
 import SignUp from "../SignUp/SignUp";
+// import { useSelector } from "react-redux";
+// import Loader from "../Loader/Loader";
 
 const Home = () => {
+  // const loginloader = useSelector((state) => state.login.loading);
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
@@ -47,6 +50,8 @@ const Home = () => {
         </Tabs>
         {value === 0 ? <Login /> : <SignUp />}
       </Box>
+      {/* {loginloader && <Loader />} */}
+      {/* <Loader /> */}
     </>
   );
 };

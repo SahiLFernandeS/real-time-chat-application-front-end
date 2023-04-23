@@ -19,7 +19,7 @@ import {
   ListItemText,
   Stack,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GETCALL, POSTCALL } from "../../Services/Services";
 import { API } from "../../API";
@@ -27,38 +27,56 @@ import {
   fetchAllUserFailure,
   fetchAllUserRequest,
   fetchAllUserSuccess,
+  fetchCreateChatFailure,
+  fetchCreateChatRequest,
+  fetchCreateChatSuccess,
 } from "../../redux";
 import { useDispatch, useSelector } from "react-redux";
+import Loader from "../Loader/Loader";
+import CustomModal from "../CustomModal/CustomModal";
+import Swal from "sweetalert2";
 
 function Header() {
   const token = useSelector((state) => state.login.data.token);
+  const userData = useSelector((state) => state.login.data);
+  const createChatLoader = useSelector((state) => state.createChat.loading);
+  const allUserLoader = useSelector((state) => state.allUser.loading);
+
   const [searchUser, setSearchUser] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [name, setName] = useState("");
-  const [state, setState] = useState(false);
+  const [drawerState, setDrawerState] = useState(false);
   const allUserData = useSelector((state) => state.allUser.data);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const toggleDrawer = (value) => {
-    setState(value);
+    setDrawerState(value);
   };
 
   const handleSearch = () => {
     dispatch(fetchAllUserRequest());
     GETCALL(`${API.GETALLUSER}?search=${name}`, `${token}`)
       .then((res) => {
-        // console.log("res---------->", res);
+        // console.log("GETALLUSERRES---------->", res);
         dispatch(fetchAllUserSuccess(res));
         setSearchUser(res);
       })
       .catch((error) => {
         dispatch(fetchAllUserFailure(error));
-        alert(error);
+        // alert(error);
+        Swal.fire({
+          icon: "error",
+          // title: 'Error',
+          text: error,
+          // footer: '<a href="">Why do I have this issue?</a>'
+        });
       });
 
     setName("");
   };
+
+  const childRef = useRef();
 
   useEffect(() => {
     if (allUserData) {
@@ -67,19 +85,26 @@ function Header() {
   }, [searchUser, allUserData]);
 
   const userClickHandler = (id) => {
-    // console.log("id----------->", id);
     const payload = {
       userId: id,
     };
-
+    dispatch(fetchCreateChatRequest());
     POSTCALL(API.CREATEACCESSCHAT, payload, token)
       .then((res) => {
-        // console.log("CREATEACCESSCHAT------------>", res);
-        navigate("/chat");
-        setState(false);
+        toggleDrawer(false);
+        // console.log("CREATEACCESSCHATRES------------>", res);
+        dispatch(fetchCreateChatSuccess(res));
       })
       .catch((error) => {
-        alert(error);
+        toggleDrawer(false);
+        dispatch(fetchCreateChatFailure(error));
+        // alert(error);
+        Swal.fire({
+          icon: "error",
+          // title: 'Error',
+          text: error,
+          // footer: '<a href="">Why do I have this issue?</a>'
+        });
       });
   };
 
@@ -118,24 +143,31 @@ function Header() {
         />
         <Divider sx={{ margin: "10px 0px" }} />
         {searchUser.length > 0 ? (
-          <List disablePadding>
-            {searchUser.map((text, index) => (
-              <ListItem key={text._id} disableGutters disablePadding>
-                <ListItemButton onClick={() => userClickHandler(text._id)}>
-                  <ListItemIcon>
-                    <Avatar alt="user" variant="circular">
-                      {text.name}
-                    </Avatar>
-                  </ListItemIcon>
-                  <ListItemText primary={text.name} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
+          <>
+            {allUserLoader ? (
+              <LoadingSkeleton />
+            ) : (
+              <List disablePadding>
+                {searchUser.map((text, index) => (
+                  <ListItem key={text._id} disableGutters disablePadding>
+                    <ListItemButton onClick={() => userClickHandler(text._id)}>
+                      <ListItemIcon>
+                        <Avatar alt="user" variant="circular">
+                          {text.name}
+                        </Avatar>
+                      </ListItemIcon>
+                      <ListItemText primary={text.name} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </>
         ) : (
-          <LoadingSkeleton />
+          "No Data Found"
         )}
       </Stack>
+      {createChatLoader && <Loader />}
     </Box>
   );
   const open = Boolean(anchorEl);
@@ -173,7 +205,7 @@ function Header() {
         </Button>
         <Drawer
           anchor="left"
-          open={state}
+          open={drawerState}
           onClose={() => toggleDrawer(false)}
           PaperProps={{
             sx: { width: "290px" },
@@ -215,7 +247,14 @@ function Header() {
             "aria-labelledby": "basic-button",
           }}
         >
-          <MenuItem onClick={handleClose}>My Profile</MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              childRef.current.handleOpen();
+            }}
+          >
+            My Profile
+          </MenuItem>
           <MenuItem
             onClick={() => {
               sessionStorage.clear();
@@ -228,6 +267,26 @@ function Header() {
           </MenuItem>
         </Menu>
       </Box>
+
+      <CustomModal
+        ref={childRef}
+        onClose={() => childRef.current.handleClose()}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Avatar sx={{ width: "100px", height: "100px" }}>
+            {userData.name}
+          </Avatar>
+          <Typography>{userData.name}</Typography>
+          <Typography>{userData.email}</Typography>
+        </Box>
+      </CustomModal>
     </Box>
   );
 }

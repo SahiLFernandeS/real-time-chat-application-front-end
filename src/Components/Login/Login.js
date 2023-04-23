@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import React, { useState } from "react";
 import { POSTCALL } from "../../Services/Services";
 // eslint-disable-next-line
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 // eslint-disable-next-line
 import {
   fetchLoginFailure,
@@ -12,8 +12,11 @@ import {
 } from "../../redux";
 import { API } from "../../API";
 import { useNavigate } from "react-router-dom";
+import Loader from "../Loader/Loader";
+import Swal from "sweetalert2";
 
 function Login() {
+  const loginloader = useSelector((state) => state.login.loading);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,6 +45,13 @@ function Login() {
       })
       .catch((error) => {
         dispatch(fetchLoginFailure(error));
+        // alert(error);
+        Swal.fire({
+          icon: "error",
+          // title: 'Error',
+          text: error,
+          // footer: '<a href="">Why do I have this issue?</a>'
+        });
       });
     setEmail("");
     setPassword("");
@@ -117,6 +127,8 @@ function Login() {
       >
         Guest Login
       </Button>
+      {loginloader && <Loader />}
+      {/* <Loader /> */}
     </Box>
   );
 }

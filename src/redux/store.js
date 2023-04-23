@@ -4,6 +4,10 @@ import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import thunk from "redux-thunk";
 import { AllUserReducer } from "./allUser/allUserReducer";
+import {
+  createChatReducer,
+  myChatReducer,
+} from "./createChat/createChatReducer";
 
 const persistConfig = {
   key: "root",
@@ -13,6 +17,8 @@ const persistConfig = {
 const combined = combineReducers({
   login: loginReducer,
   allUser: AllUserReducer,
+  createChat: createChatReducer,
+  activeState: myChatReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, combined);
