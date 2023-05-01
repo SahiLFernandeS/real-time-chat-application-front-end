@@ -15,6 +15,11 @@ const Item = styled(Paper)(({ theme }) => ({
 
 function Chat() {
   const activeChat = useSelector((state) => state.activeState.activeChat);
+  const activeChatData = useSelector(
+    (state) => state.activeState.activeChatData
+  );
+  const allChat = useSelector((state) => state.allChat.data);
+
   return (
     <>
       <Box
@@ -42,8 +47,8 @@ function Chat() {
                 : { xs: "block", sm: "block" }
             }
           >
-            <Item sx={{ backgroundColor: "#b1b1b1" }}>
-              <MyChats />
+            <Item sx={{ height: "88vh" }}>
+              <MyChats activeChat={activeChat} allChat={allChat} />
             </Item>
           </Grid>
           <Grid
@@ -56,8 +61,11 @@ function Chat() {
                 : { xs: "none", sm: "none", md: "block" }
             }
           >
-            <Item sx={{ backgroundColor: "#b1b1b1" }}>
-              <ChatBox />
+            <Item sx={{ height: "88vh" }}>
+              <ChatBox
+                activeChatData={activeChatData}
+                activeChat={activeChat}
+              />
             </Item>
           </Grid>
         </Grid>

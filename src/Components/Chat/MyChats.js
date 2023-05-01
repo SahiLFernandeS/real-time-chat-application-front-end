@@ -2,8 +2,8 @@ import {
   Avatar,
   Box,
   Button,
+  Chip,
   Divider,
-  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -22,22 +22,27 @@ import {
   fetchCreateChatRequest,
   fetchCreateChatSuccess,
   myChatActive,
+  myChatActiveData,
 } from "../../redux/createChat/createChatActions";
 import Swal from "sweetalert2";
 import CustomModal from "../CustomModal/CustomModal";
 import axios from "axios";
-import CancelIcon from "@mui/icons-material/Cancel";
 import { useForm } from "react-hook-form";
 import Loader from "../Loader/Loader";
+import {
+  fetchAllChatFailure,
+  fetchAllChatRequest,
+  fetchAllChatSuccess,
+} from "../../redux";
 
 let cancelToken;
 
-function MyChats() {
-  const [userList, setuserList] = useState([]);
+function MyChats(props) {
   const [loader, setLoader] = useState(false);
   const [createGroupLoader, setCreateGroupLoader] = useState(false);
-  const activeChat = useSelector((state) => state.activeState.activeChat);
+  const { activeChat, allChat } = props;
   const token = useSelector((state) => state.login.data.token);
+  const userId = useSelector((state) => state.login.data._id);
   const createChat = useSelector((state) => state.createChat.data);
   const [searchUser, setSearchUser] = useState([]);
   const [addedUser, setAddedUser] = useState([]);
@@ -54,24 +59,35 @@ function MyChats() {
   const childRef = useRef();
 
   const handleGroupOrNormalChat = (text) => {
-    return text.isGroupChat !== true ? text.users[1].name : text.chatName;
+    if (text.isGroupChat !== true) {
+      if (text.users[1]._id !== userId) {
+        return text.users[1].name;
+      } else {
+        return text.users[0].name;
+      }
+    } else {
+      return text.chatName;
+    }
+    // return text.isGroupChat !== true ? text.users[1].name : text.chatName;
   };
 
   useEffect(() => {
     setLoader(true);
+    dispatch(fetchAllChatRequest());
     GETCALL(API.FETCHCHATS, token)
       .then((res) => {
-        setuserList(res);
         setLoader(false);
+        dispatch(fetchAllChatSuccess(res));
       })
       .catch((error) => {
         setLoader(false);
+        dispatch(fetchAllChatFailure(error));
         Swal.fire({
           icon: "error",
           text: error,
         });
       });
-  }, [token, createChat]);
+  }, [createChat, dispatch, token]);
 
   const userOnchangeHandler = (userName) => {
     if (cancelToken) {
@@ -125,14 +141,14 @@ function MyChats() {
       });
   };
 
-  useEffect(() => {}, [userList, token]);
+  useEffect(() => {}, [allChat, token]);
 
   return (
     <Box
       sx={{
         overflowX: "hidden",
         overflowY: "auto",
-        height: "86vh",
+        height: "100%",
         backgroundColor: "#fff",
         borderRadius: "6px",
       }}
@@ -154,8 +170,8 @@ function MyChats() {
       <List disablePadding>
         {loader ? (
           <LoadingSkeleton />
-        ) : userList.length > 0 ? (
-          userList.map((text, index) => (
+        ) : allChat.length > 0 ? (
+          allChat.map((text, index) => (
             <ListItem key={text._id} disablePadding>
               <ListItemButton
                 sx={{
@@ -171,7 +187,9 @@ function MyChats() {
                 selected={activeChat === index + 1 ? true : false}
                 onClick={() => {
                   // setactiveChat(index);
+                  // console.log(text);
                   dispatch(myChatActive(index + 1));
+                  dispatch(myChatActiveData(text));
                 }}
               >
                 <ListItemIcon>
@@ -228,33 +246,26 @@ function MyChats() {
             <span style={{ color: "red" }}>Please provide valid input</span>
           )}
           {/* added users */}
-          <Box display={"inherit"}>
+          <Box display={"inherit"} sx={{ width: "100%", overflow: "auto" }}>
             {addedUser?.map((user) => {
               return (
                 <>
                   <Box
                     sx={{
                       display: "flex",
-                      backgroundColor: "purple",
-                      color: "white",
                       alignItems: "center",
                       margin: "10px 2px",
-                      padding: "5px 5px",
-                      borderRadius: "8px",
                     }}
-                    // key={user._id}
                   >
-                    {user.name}
-                    <IconButton
-                      sx={{ color: "#fff" }}
-                      onClick={() =>
+                    <Chip
+                      color="secondary"
+                      label={user.name}
+                      onDelete={() =>
                         setAddedUser(
                           addedUser.filter((item) => item._id !== user._id)
                         )
                       }
-                    >
-                      <CancelIcon />
-                    </IconButton>
+                    />
                   </Box>
                 </>
               );

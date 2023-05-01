@@ -63,8 +63,34 @@ export const GETCALLWITHCANCEL = (path, cancelToken, token = "") => {
       })
       .catch((error) => {
         if (axios.isCancel(error)) {
-          console.log("Request canceled", error.message);
+          // console.log("Request canceled", error.message);
         }
+        reject(error.message);
+      });
+  });
+};
+
+export const PUTCALL = (url, payload, token = "") => {
+  let data = JSON.stringify(payload);
+
+  let config = {
+    method: "put",
+    maxBodyLength: Infinity,
+    url: `${BaseURL}${url}`,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    data: data,
+  };
+
+  return new Promise((resolve, reject) => {
+    axios
+      .request(config)
+      .then((response) => {
+        resolve(response.data);
+      })
+      .catch((error) => {
         reject(error.message);
       });
   });

@@ -42,6 +42,7 @@ export const createChatReducer = (state = initialState, action) => {
 
 const myChatInitialState = {
   activeChat: null,
+  activeChatData: [],
 };
 
 export const myChatReducer = (state = myChatInitialState, action) => {
@@ -50,6 +51,12 @@ export const myChatReducer = (state = myChatInitialState, action) => {
       return {
         ...state,
         activeChat: action.payload,
+      };
+
+    case "SETACTIVECHATDATA":
+      return {
+        ...state,
+        activeChatData: action.payload,
       };
 
     default:

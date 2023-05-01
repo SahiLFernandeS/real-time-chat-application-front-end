@@ -30,3 +30,10 @@ export const myChatActive = (data) => {
     payload: data,
   };
 };
+
+export const myChatActiveData = (data) => {
+  return {
+    type: "SETACTIVECHATDATA",
+    payload: data,
+  };
+};

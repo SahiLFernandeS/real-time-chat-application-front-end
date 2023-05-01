@@ -8,6 +8,7 @@ import {
   createChatReducer,
   myChatReducer,
 } from "./createChat/createChatReducer";
+import { allChatReducer } from "./allChat/allChatReducer";
 
 const persistConfig = {
   key: "root",
@@ -19,6 +20,7 @@ const combined = combineReducers({
   allUser: AllUserReducer,
   createChat: createChatReducer,
   activeState: myChatReducer,
+  allChat: allChatReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, combined);
