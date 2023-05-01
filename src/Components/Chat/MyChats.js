@@ -159,6 +159,7 @@ function MyChats(props) {
           justifyContent: "space-between",
           alignItems: "center",
           padding: "12px 20px",
+          // backgroundColor: "#b1b1b1",
         }}
       >
         <Typography variant="h6">My Chats</Typography>

@@ -58,7 +58,6 @@ function ChatBox(props) {
   const childRef = useRef();
 
   const handleGroupOrNormalChat = (text) => {
-    // console.log(text);
     if (text.isGroupChat !== true) {
       if (text.users[1]._id !== userId) {
         return text.users[1].name;
@@ -68,11 +67,9 @@ function ChatBox(props) {
     } else {
       return text.chatName;
     }
-    // return text.isGroupChat !== true ? text.users[1].name : text.chatName;
   };
 
   const handleGroupOrNormalChatEmail = (text) => {
-    // console.log(text);
     if (text.isGroupChat !== true) {
       if (text.users[1]._id !== userId) {
         return text.users[1].email;
@@ -82,7 +79,6 @@ function ChatBox(props) {
     } else {
       return text.chatName;
     }
-    // return text.isGroupChat !== true ? text.users[1].name : text.chatName;
   };
 
   const openGroupModalHandler = (groupChatData) => {
@@ -178,7 +174,7 @@ function ChatBox(props) {
     GETCALL(API.FETCHCHATSMESSAGES + `/${chatId}`, token)
       .then((res) => {
         setNewMessages(res);
-        console.log("res-------->", res);
+        // console.log("res-------->", res);
       })
       .catch((error) => {
         Swal.fire({
@@ -393,11 +389,8 @@ function ChatBox(props) {
               </>
             )}
           </Typography>
-          {/* <Divider /> */}
           <Box
             sx={{
-              // display: "flex",
-              // overflowY: "hidden",
               textAlign: "left",
               width: "100%",
               backgroundColor: "#b1b1b1",
@@ -429,7 +422,6 @@ function ChatBox(props) {
                     type="text"
                     size="small"
                     placeholder="Enter New Message here...."
-                    // sx={{ backgroundColor: "#fff" }}
                     onChange={messageOnChangeHandler}
                     value={enterMessages}
                   ></TextField>
