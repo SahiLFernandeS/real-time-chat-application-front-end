@@ -58,7 +58,7 @@ function Login() {
   };
   return (
     <Box
-      sx={{ padding: "10px" }}
+      sx={{ padding: "10px"}}
       component="form"
       onSubmit={handleSubmit(onSubmit)}
     >
@@ -68,6 +68,9 @@ function Login() {
         type="text"
         sx={{ width: "100%", margin: "10px 0px" }}
         size="small"
+        InputLabelProps={{
+          shrink: true,
+        }}
         // required
 
         onChange={(e) => {
@@ -89,6 +92,9 @@ function Login() {
         type="password"
         sx={{ width: "100%", margin: "10px 0px" }}
         size="small"
+        InputLabelProps={{
+          shrink: true,
+        }}
         // required
 
         onChange={(e) => {
@@ -103,7 +109,7 @@ function Login() {
       <Button
         variant="contained"
         type="submit"
-        color="success"
+        color="info"
         sx={{
           width: "100%",
           margin: "10px 0px",

@@ -24,11 +24,12 @@ function Chat() {
     <>
       <Box
         sx={{
-          backgroundColor: "#b1b1b1",
+          // backgroundColor: "#b1b1b1",
           height: "8vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          padding: "0px 8px"
         }}
       >
         <Header />

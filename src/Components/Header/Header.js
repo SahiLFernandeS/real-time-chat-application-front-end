@@ -188,6 +188,7 @@ function Header() {
         alignItems: "center",
         backgroundColor: "#fff",
         borderRadius: "6px",
+        padding: "0px 12px"
       }}
     >
       <Box>

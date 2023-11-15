@@ -64,6 +64,9 @@ function SignUp() {
         type="text"
         sx={{ width: "100%", margin: "10px 0px" }}
         size="small"
+        InputLabelProps={{
+          shrink: true,
+        }}
         {...register("name", {
           required: true,
           maxLength: 20,
@@ -78,6 +81,9 @@ function SignUp() {
         type="text"
         sx={{ width: "100%", margin: "10px 0px" }}
         size="small"
+        InputLabelProps={{
+          shrink: true,
+        }}
         {...register("email", {
           required: true,
           pattern: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
@@ -92,6 +98,9 @@ function SignUp() {
         type="password"
         sx={{ width: "100%", margin: "10px 0px" }}
         size="small"
+        InputLabelProps={{
+          shrink: true,
+        }}
         {...register("password", {
           required: true,
         })}
@@ -105,6 +114,9 @@ function SignUp() {
         type="password"
         sx={{ width: "100%", margin: "10px 0px" }}
         size="small"
+        InputLabelProps={{
+          shrink: true,
+        }}
         {...register("confirmPassword", {
           required: true,
         })}

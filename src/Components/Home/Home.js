@@ -23,6 +23,7 @@ const Home = () => {
           backgroundColor: "#fff",
           textAlign: "center",
           boxShadow: "0px 0px 10px 0px",
+          maxWidth: "900px" 
         }}
       >
         <Typography variant="h3">
@@ -37,6 +38,7 @@ const Home = () => {
           margin: "auto",
           backgroundColor: "#fff",
           boxShadow: "0px 0px 10px 0px",
+          maxWidth: "900px",
         }}
       >
         <Tabs
