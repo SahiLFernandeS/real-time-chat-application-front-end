@@ -2,7 +2,6 @@ import { Box, Typography, Tab, Tabs } from "@mui/material";
 import React, { useState } from "react";
 import Login from "../Login/Login";
 import SignUp from "../SignUp/SignUp";
-// import { useSelector } from "react-redux";
 // import Loader from "../Loader/Loader";
 
 const Home = () => {
@@ -12,6 +11,7 @@ const Home = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
   return (
     <>
       <Box
@@ -23,7 +23,7 @@ const Home = () => {
           backgroundColor: "#fff",
           textAlign: "center",
           boxShadow: "0px 0px 10px 0px",
-          maxWidth: "900px" 
+          maxWidth: "900px",
         }}
       >
         <Typography variant="h3">

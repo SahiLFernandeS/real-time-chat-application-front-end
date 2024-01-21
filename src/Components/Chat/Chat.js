@@ -4,6 +4,14 @@ import MyChats from "./MyChats";
 import ChatBox from "./ChatBox";
 import { Box, Grid, Paper, styled } from "@mui/material";
 import { useSelector } from "react-redux";
+import { io } from "socket.io-client";
+
+export var socket = io("http://192.168.0.116:8000", {});
+
+// console.log(
+//   "localStorage.getItem",
+//   JSON.parse(JSON.parse(localStorage.getItem("persist:root")).login).data.token
+// );
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -29,7 +37,7 @@ function Chat() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "0px 8px"
+          padding: "0px 8px",
         }}
       >
         <Header />

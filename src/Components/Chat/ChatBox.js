@@ -40,6 +40,7 @@ import {
 } from "../../redux";
 import { filterMessages } from "../../CommonFunctions/CommonFunction";
 import ScrollableFeed from "react-scrollable-feed";
+import { socket } from "./Chat";
 
 let cancelToken;
 
@@ -56,6 +57,8 @@ function ChatBox(props) {
   const [loader, setLoader] = useState(false);
 
   const childRef = useRef();
+
+  // console.log("socket------->", props.socket);
 
   const handleGroupOrNormalChat = (text) => {
     if (text.isGroupChat !== true) {
@@ -166,11 +169,11 @@ function ChatBox(props) {
           text: error,
         });
       });
-  }, [activeChat, activeChatData, dispatch, token]);
+  }, [activeChat, activeChatData, token]);
 
   const fetchChatMessages = () => {
     if (!activeChat) return;
-    const chatId = activeChatData._id;
+    let chatId = activeChatData._id;
     GETCALL(API.FETCHCHATSMESSAGES + `/${chatId}`, token)
       .then((res) => {
         setNewMessages(res);
@@ -185,8 +188,22 @@ function ChatBox(props) {
   };
 
   useEffect(() => {
+    let chatId = activeChatData._id;
+    socket.emit("joinRoom", { chatId: chatId });
     fetchChatMessages();
   }, [activeChat]);
+
+  useEffect(() => {
+    // console.log("hellooooo");
+    socket.on("newMessage", (data) => {
+      console.log("data------>", data);
+      setNewMessages((prev) => {
+        return [...prev, data];
+      });
+    });
+  }, []);
+
+  // useEffect(() => {}, [newMessages]);
 
   const enterMessageHandler = (event) => {
     const chatId = activeChatData._id;
@@ -197,7 +214,8 @@ function ChatBox(props) {
       POSTCALL(API.SENDMESSAGES, payload, token)
         .then((res) => {
           // console.log("res------>", res);
-          setNewMessages([...newMessages, res]);
+          socket.emit("sendMessage", res);
+          // setNewMessages([...newMessages, res]);
           // setLoader(false);
         })
         .catch((error) => {
