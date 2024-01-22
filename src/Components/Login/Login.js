@@ -41,7 +41,7 @@ function Login() {
         // console.log("res------->", res);
         dispatch(fetchLoginSuccess(res));
         sessionStorage.setItem("userName", res.name);
-        navigate("/chat");
+        navigate("/chat", { state: { loginData: res, isLogin: true } });
       })
       .catch((error) => {
         dispatch(fetchLoginFailure(error));
@@ -58,7 +58,7 @@ function Login() {
   };
   return (
     <Box
-      sx={{ padding: "10px"}}
+      sx={{ padding: "10px" }}
       component="form"
       onSubmit={handleSubmit(onSubmit)}
     >

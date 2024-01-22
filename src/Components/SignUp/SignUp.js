@@ -36,7 +36,7 @@ function SignUp() {
       .then((res) => {
         dispatch(fetchLoginSuccess(res));
         sessionStorage.setItem("userName", res.name);
-        navigate("/chat");
+        navigate("/chat", { state: { loginData: res, isLogin: true } });
         setLoader(false);
       })
       .catch((error) => {

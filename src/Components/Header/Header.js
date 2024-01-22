@@ -20,7 +20,7 @@ import {
   Stack,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { GETCALL, POSTCALL } from "../../Services/Services";
 import { API } from "../../API";
 import {
@@ -41,6 +41,11 @@ function Header() {
   const userData = useSelector((state) => state.login.data);
   const createChatLoader = useSelector((state) => state.createChat.loading);
   const allUserLoader = useSelector((state) => state.allUser.loading);
+  // const { state } = useLocation();
+
+  // const userData = state.loginData;
+
+  // const token = userData.token;
 
   const [searchUser, setSearchUser] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -188,7 +193,7 @@ function Header() {
         alignItems: "center",
         backgroundColor: "#fff",
         borderRadius: "6px",
-        padding: "0px 12px"
+        padding: "0px 12px",
       }}
     >
       <Box>
